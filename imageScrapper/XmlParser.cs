@@ -28,6 +28,7 @@ internal class XmlParser
 		var usefulTest = xmlDocument.GetElementsByTagName("sqs-image-shape-container-element");
         String lastTagName = "";
 		xmlReader.MoveToContent();
+		xmlDocument.
         while (xmlReader.Read() )
 		{
 			switch(xmlReader.NodeType)
