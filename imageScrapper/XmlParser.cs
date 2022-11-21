@@ -1,8 +1,14 @@
 ﻿using System;
+/// <summary>
+/// A class to parse through the XML file for image tags.
+/// </summary>
 
-public class Class1
+internal class XmlParser
 {
-	public Class1()
+	public XmlParser()
 	{
+		XmlReader reader = new XmlReader();
+
+
 	}
 }
