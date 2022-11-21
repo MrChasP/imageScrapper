@@ -1,14 +1,21 @@
 ﻿using System;
-/// <summary>
-/// A class to parse through the XML file for image tags.
-/// </summary>
+using System.Xml;
+
 
 internal class XmlParser
 {
-	public XmlParser()
+	public XmlParser(string uri)
 	{
-		XmlReader reader = new XmlReader();
+		// Replace later!!!!
+		uri = "Z:\\WebScrapper\\Squarespace-Wordpress-Export-11-18-2022 (1)\\Squarespace-Wordpress-Export-11-18-2022 (1).xml";
 
+        Reader(uri);
 
 	}
+
+	public static void Reader(string uri)
+	{
+		XmlReaderSettings settings = new
+        
+    }
 }
