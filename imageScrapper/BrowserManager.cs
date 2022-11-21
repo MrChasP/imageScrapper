@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,8 +23,19 @@ namespace imageScrapper
         /// !!!WARNING!!! ONLY WORKS ON WINDOWS
         /// </summary>
         /// <param name="url">URL of the location of the .jpg</param>
-        public static void DownloadImage(string url)
+        public static void DownloadImage([Optional]string url, [Optional] Uri uri)
         {
+            try
+            {
+                if (url == null) { 
+               url = uri.ToString();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             WebClient webClient = new WebClient();
             string cwd = Environment.CurrentDirectory;
             var firstPartofDirectory = cwd.Split(@"\source\");
@@ -31,18 +43,19 @@ namespace imageScrapper
             
             if(Directory.Exists(newDirectory))
             {   
+                Directory.SetCurrentDirectory(newDirectory);
                 var allFiles = Directory.GetFiles(newDirectory);
                 var imageName = "image " + allFiles.Length+".jpg";
                 webClient.DownloadFile(url, imageName);
-                File.Move(cwd +@"\"+imageName, newDirectory +@"\"+ imageName) ;
+                
             }
             else
             {
                 Directory.CreateDirectory(newDirectory);
+                Directory.SetCurrentDirectory(newDirectory);
                 var allFiles = Directory.GetFiles(newDirectory);
                 var imageName = "image " + allFiles.Length;
                 webClient.DownloadFile(url, imageName + ".jpg");
-                File.Move(imageName, newDirectory);
             }
         }
     }
