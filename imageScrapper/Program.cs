@@ -16,16 +16,29 @@ var url2 = @"C:\Users\elk85\OneDrive\Desktop\xmlToTXT.txt";
 var test = TxtParser.UrlToList(url2);
 var urls = XmlParser.Reader(url);
 
+List<string> temp = new();
+
 Random testValue = new Random();
 int i = 0;
-foreach(XmlNode t in urls)
+foreach(XmlNode node in urls)
 {
-    var temp = t.InnerText;
-    if (test.Contains(temp))
+    var temp2 = node.InnerText.Split(@"""");
+    foreach(string s in temp2)
     {
-        Console.WriteLine("Test: "+i+" Found image!");
+        if (s.Contains("http"))
+        {
+            temp.Add(s);
+        }
     }
-    i++;
+}
+//TxtParser.CopyToFile(temp);
+var firstNotSecond = temp.Except(test);
+
+var asdf = firstNotSecond.ToList();
+
+foreach (var s in asdf)
+{
+    Console.WriteLine(s);
 }
 
 

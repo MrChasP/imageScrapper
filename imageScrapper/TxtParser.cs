@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace imageScrapper
 {
@@ -24,7 +25,7 @@ namespace imageScrapper
 
                 foreach(string s in txtDocument)
                 {
-                    if(s.Contains("https"))
+                    if(s.Contains("https") || s.Contains("http"))
                     {
                         urlList.Add(s); 
                     }
@@ -42,7 +43,14 @@ namespace imageScrapper
             {
                 Console.WriteLine(e.Message);
             }
+          //  CopyToFile(txtDocument);
             return txtDocument;
+        }
+        public static async Task CopyToFile(List<string> list)
+        {
+            var testurl = "C:\\Users\\elk85\\OneDrive\\Documents\\Tests";
+            await File.WriteAllLinesAsync(testurl + "\\test2.txt", list);
+
         }
         //TODO CLEAN UP FUNCTION MAKE IT JUST THE LOOPING PATERN AT THE END!
         public static List<string> ThingsToRemove(List<string> messy)
@@ -63,7 +71,7 @@ namespace imageScrapper
 
             foreach(string s in messy)
             {
-                if (s.Contains("https"))
+                if (s.Contains("https")||s.Contains("http"))
                 {
                     if (s.Contains("images"))
                     {
@@ -86,12 +94,12 @@ namespace imageScrapper
                 var temp = c.Split(@"=");
                 foreach(string s in temp)
                 {
-                    if (s.Contains("https"))
+                    if (s.Contains("https")||s.Contains("http"))
                     {
                         var temp2 = s.Split(" ");
                         foreach(string j in temp2)
                         {
-                            if (j.Contains("https"))
+                            if (j.Contains("https")||j.Contains("http"))
                             {
                                 tempDump.Add(j);
                             }
@@ -107,7 +115,7 @@ namespace imageScrapper
                 var temp = c.Split("\r");
                 foreach(string s in temp)
                 {
-                    if (s.Contains("https"))
+                    if (s.Contains("https")|| s.Contains("http"))
                     {
                         tempDump.Add(s);
                     }
@@ -120,7 +128,7 @@ namespace imageScrapper
                 var temp = c.Split("\"");
                 foreach(string s in temp)
                 {
-                    if (s.Contains("https"))
+                    if (s.Contains("https") || s.Contains("http"))
                     {
                         tempDump.Add(s);
                     }
@@ -133,7 +141,20 @@ namespace imageScrapper
                 var temp = c.Split(@"""");
                 foreach (string s in temp)
                 {
-                    if (s.Contains("https"))
+                    if (s.Contains("https") || s.Contains("http"))
+                    {
+                        tempDump.Add(s);
+                    }
+                }
+            }
+            cleanedUp = tempDump;
+            tempDump = new();
+            foreach (string c in cleanedUp)
+            {
+                var temp = c.Split(">");
+                foreach (string s in temp)
+                {
+                    if (s.Contains("https") || s.Contains("http"))
                     {
                         tempDump.Add(s);
                     }
