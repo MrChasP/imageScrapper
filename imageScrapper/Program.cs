@@ -14,38 +14,38 @@ using System.Xml;
 var url = @"D:\WebScrapper\squarespaceCrap\squarespaceCrap.xml";
 var url2 = @"C:\Users\elk85\OneDrive\Desktop\xmlToTXT.txt";
 var test = TxtParser.UrlToList(url2);
-var urls = XmlParser.Reader(url);
+//var urls = XmlParser.Reader(url);
 
-List<string> temp = new();
+//List<string> temp = new();
 
-Random testValue = new Random();
-int i = 0;
-foreach(XmlNode node in urls)
-{
-    var temp2 = node.InnerText.Split(@"""");
-    foreach(string s in temp2)
-    {
-        if (s.Contains("http"))
-        {
-            temp.Add(s);
-        }
-    }
-}
-//TxtParser.CopyToFile(temp);
-var firstNotSecond = temp.Except(test);
-
-var asdf = firstNotSecond.ToList();
-
-foreach (var s in asdf)
-{
-    Console.WriteLine(s);
-}
-
-
+//Random testValue = new Random();
 //int i = 0;
-//foreach (string s in test)
+//foreach(XmlNode node in urls)
 //{
-//    Console.WriteLine(i);
-//    Parallel.Invoke(() => BrowserManager.DownloadImage(s));
-//    i++;
+//    var temp2 = node.InnerText.Split(@"""");
+//    foreach(string s in temp2)
+//    {
+//        if (s.Contains("http"))
+//        {
+//            temp.Add(s);
+//        }
+//    }
 //}
+////TxtParser.CopyToFile(temp);
+//var firstNotSecond = temp.Except(test);
+
+//var asdf = firstNotSecond.ToList();
+
+//foreach (var s in asdf)
+//{
+//    Console.WriteLine(s);
+//}
+
+
+int i = 0;
+foreach (string s in test)
+{
+    Console.WriteLine(i);
+    Parallel.Invoke(() => BrowserManager.DownloadImage(s));
+    i++;
+}
