@@ -56,7 +56,7 @@ namespace imageScrapper
             {
                 webClient.DownloadFile(url, imageName);
             }
-            catch (Exception)
+            catch (System.AggregateException)
             {
                 Console.WriteLine("Hey heads up I couldn't download image at url: " + url);
                 throw;

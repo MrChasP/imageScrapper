@@ -12,14 +12,15 @@ using System.Xml;
 
 
 var url = @"D:\WebScrapper\squarespaceCrap\squarespaceCrap.xml";
+var url2 = @"C:\Users\elk85\OneDrive\Desktop\xmlToTXT.txt";
+var test = TxtParser.UrlToList(url2);
 
-var urls = XmlParser.Reader(url);
+//var urls = XmlParser.Reader(url);
 
-
-foreach (XmlNode urlString in urls)
+int i = 0;
+foreach (string s in test)
 {
-    var temp = urlString.InnerText;
-    //Console.WriteLine(temp);
-    BrowserManager.DownloadImage(temp);
-    //Parallel.Invoke(() => BrowserManager.DownloadImage(temp));
+    Console.WriteLine(i);
+    Parallel.Invoke(() => BrowserManager.DownloadImage(s));
+    i++;
 }
