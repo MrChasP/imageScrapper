@@ -9,7 +9,13 @@ namespace imageScrapper
 {
     public class TxtParser
     {
-        public static List<string> UrlToList(string url)
+        private static List<string> _listOfHolding = new List<string>();
+        /// <summary>
+        /// Used to parse the Urls out of a .txt file!
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static List<string> UrlToListAsync(string url)
         {
             var txtDocument = new List<string>();
             var urlList = new List<string>();
@@ -29,104 +35,80 @@ namespace imageScrapper
                     {
                         urlList.Add(s); 
                     }
-                }var test = ThingsToRemove(urlList);
-                for(int i =0; i < 10; i++)
+                }
+                var test = XmlSyntaxCleaning(urlList);
+
+                for (int i = 0; i < 10; i++)
                 {
-                    test = ThingsToRemove(test);
+                    test = XmlSyntaxCleaning(test);
                     txtDocument = test;
                 }
-                
-                
-            
+
+
+
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-          //  CopyToFile(txtDocument);
+            Console.WriteLine("Would you like to save a file with all of the URLS? Y/N");
+            var userInput = Console.ReadLine();
+            //TODO setup a question to ask them where they would like to save the file
+            if(userInput == "y" || userInput== "yes"||userInput =="Y") 
+            {
+                Console.WriteLine("File will be saved to your desktop!");
+                CopyToFile(txtDocument,null);
+            }
+          
             return txtDocument;
         }
-        public static async Task CopyToFile(List<string> list)
+        public static async Task CopyToFile(List<string> list, string? fileSaveLocation)
         {
-            var testurl = "C:\\Users\\elk85\\OneDrive\\Documents\\Tests";
-            await File.WriteAllLinesAsync(testurl + "\\test2.txt", list);
+            if (fileSaveLocation == null)
+            {
+                fileSaveLocation = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            }
+            await File.WriteAllLinesAsync(fileSaveLocation + "\\AllURLImages.txt", list);
 
         }
         //TODO CLEAN UP FUNCTION MAKE IT JUST THE LOOPING PATERN AT THE END!
-        public static List<string> ThingsToRemove(List<string> messy)
+        public static List<string> XmlSyntaxCleaning(List<string> messy)
         {
-            List<string> charToRemove = new();
+
             List<string> tempDump = new();
             List<string> cleanedUp = new();
-            charToRemove.Add("<");
-            charToRemove.Add(">");
-            charToRemove.Add("img");
-            charToRemove.Add("class");
-            charToRemove.Add("thumb-image");
-            charToRemove.Add(@"""");
-            charToRemove.Add("=");
-            charToRemove.Add("src");
-
-
-
-            foreach(string s in messy)
+       
+          
+            foreach (string s in messy)
             {
                 if (s.Contains("https")||s.Contains("http"))
                 {
                     if (s.Contains("images"))
                     {
                         cleanedUp.Add(s);
-
                     }
                     
                 }
             }
-
             tempDump = cleanedUp;
-            List<string> randomDeleteMe = new();
-            foreach(string s in charToRemove)
-            {
-                cleanedUp.RemoveAll(t => t == s);
-            }
             tempDump = new();
-            foreach(string c in cleanedUp)
+            foreach (string c in cleanedUp)
             {
-                var temp = c.Split(@"=");
-                foreach(string s in temp)
-                {
-                    if (s.Contains("https")||s.Contains("http"))
+                    var temp = c.Split("=");
+                    foreach (string s in temp)
                     {
-                        var temp2 = s.Split(" ");
-                        foreach(string j in temp2)
+                        if (s.Contains("https") || s.Contains("http"))
                         {
-                            if (j.Contains("https")||j.Contains("http"))
-                            {
-                                tempDump.Add(j);
-                            }
+                            tempDump.Add(s);
                         }
-                        
                     }
-                }
             }
             cleanedUp = tempDump;
             tempDump = new();
-            foreach(string c in cleanedUp)
-            {
-                var temp = c.Split("\r");
-                foreach(string s in temp)
-                {
-                    if (s.Contains("https")|| s.Contains("http"))
-                    {
-                        tempDump.Add(s);
-                    }
-                }
-            }
-            cleanedUp = tempDump;
-            tempDump = new();
-            foreach(string c in cleanedUp)
+            foreach (string c in cleanedUp)
             {
                 var temp = c.Split("\"");
-                foreach(string s in temp)
+                foreach (string s in temp)
                 {
                     if (s.Contains("https") || s.Contains("http"))
                     {

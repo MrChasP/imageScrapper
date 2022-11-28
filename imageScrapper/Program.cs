@@ -1,51 +1,68 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿
 using imageScrapper;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Xml;
 
-//Console.WriteLine("Hello, World!");
-//string cwd = Environment.CurrentDirectory;
-//var firstPartofDirectory = cwd.Split(@"\source\");
-//string newDirectory = firstPartofDirectory[0];
-//Console.WriteLine(newDirectory + @"\pictures");
-////BrowserManager.DownloadImage("https://images.squarespace-cdn.com/content/v1/5db4e539e4d7794c5fdd065f/1597094574604-9EKGYTJ3IS2P3LP9UXAM/IMG_20200122_111211_Original.jpg");
-
-
-var url = @"D:\WebScrapper\squarespaceCrap\squarespaceCrap.xml";
-var url2 = @"C:\Users\elk85\OneDrive\Desktop\xmlToTXT.txt";
-var test = TxtParser.UrlToList(url2);
-//var urls = XmlParser.Reader(url);
-
-//List<string> temp = new();
-
-//Random testValue = new Random();
-//int i = 0;
-//foreach(XmlNode node in urls)
-//{
-//    var temp2 = node.InnerText.Split(@"""");
-//    foreach(string s in temp2)
-//    {
-//        if (s.Contains("http"))
-//        {
-//            temp.Add(s);
-//        }
-//    }
-//}
-////TxtParser.CopyToFile(temp);
-//var firstNotSecond = temp.Except(test);
-
-//var asdf = firstNotSecond.ToList();
-
-//foreach (var s in asdf)
-//{
-//    Console.WriteLine(s);
-//}
-
-
-int i = 0;
-foreach (string s in test)
+bool badInput = true;
+string userURL = string.Empty;
+//TODO add more file formats
+do
 {
-    Console.WriteLine(i);
-    Parallel.Invoke(() => BrowserManager.DownloadImage(s));
+    Console.WriteLine("Welcome \n depending on your internet speed, and amount of urls this could take a while.\nThe estimated time left posted during the downloading phase is simply an estimate and should be treated as an estimate.\n Please paste the file location in! Excepted File formats: .TXT");
+    var userInput = Console.ReadLine();
+
+    if (File.Exists(userInput))
+    {
+        badInput = false;
+        userURL = userInput;
+        
+    }
+} while (badInput);
+
+
+var txtParsedURL = TxtParser.UrlToListAsync(userURL);
+badInput = true;
+string userSaveLocation = string.Empty;
+do
+{
+    
+    Console.WriteLine("Where would you like the pictures to be saved? Click enter to save to desktop in a folder.");
+    var userInput = Console.ReadLine();
+
+    if (File.Exists(userInput))
+    {
+        badInput = false;
+        userSaveLocation = userInput;
+
+    }
+    if(userInput == null || userInput =="")
+    {
+        badInput = false;
+        userSaveLocation = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+    }
+} while (badInput);
+Stopwatch stopwatch= Stopwatch.StartNew();
+int i = 1;
+List<TimeSpan> timeList = new List<TimeSpan>();
+foreach (var s in txtParsedURL)
+{
+    stopwatch.Restart();
+    stopwatch.Start();
+    Console.WriteLine(i+ " out of "+txtParsedURL.Count+ " have been downloaded");
+    Parallel.Invoke(() => BrowserManager.DownloadImage(s,null, userSaveLocation));
     i++;
+    Console.Clear();
+    stopwatch.Stop();
+    var timeTaken = stopwatch.Elapsed;
+    var timeRemaining = timeTaken * (txtParsedURL.Count - i);
+    timeRemaining = timeRemaining / 60;
+    timeList.Add(timeRemaining);
+    double timeLeft = 0;
+    foreach(var t in timeList)
+    {
+        timeLeft = timeLeft + t.TotalSeconds;
+    }
+
+    Console.WriteLine("Approximately " + ((int)(timeLeft/timeList.Count)) + " min remaining");
 }

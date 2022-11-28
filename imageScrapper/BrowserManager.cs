@@ -12,19 +12,23 @@ namespace imageScrapper
 {
     /// <summary>
     /// This class will be utalized to open and navigate to the website along with downloading the image
-    /// @Author: Chas Phyle
+    /// 
     /// </summary>
     internal class BrowserManager
     {
         
-        private string _url;
+        private static string _url = String.Empty;
+
         /// <summary>
         /// Downloads the image to a new directory in the users Picture folder
         /// !!!WARNING!!! ONLY WORKS ON WINDOWS
         /// </summary>
         /// <param name="url">URL of the location of the .jpg</param>
-        public static void DownloadImage([Optional] string url, [Optional] Uri uri)
+        public static void DownloadImage([Optional] string url, [Optional] Uri uri, string userSaveLocation)
         {
+            bool badInput = true;
+            
+            //TODO handle if the uri bad
             try
             {
                 if (url == null) {
@@ -36,40 +40,37 @@ namespace imageScrapper
 
                 throw;
             }
+            
+            //TODO Should be HttpClient webClient = new HttpClient(); However, the HttpClient does not have a method for download content and will need some more work!
             WebClient webClient = new WebClient();
-            string cwd = Environment.CurrentDirectory;
-            string newDirectory = null;
-            if (!cwd.Contains("C:\\Users\\elk85\\Pictures\\schoolPictures")) { 
-            var firstPartofDirectory = cwd.Split(@"\source\");
-             newDirectory = firstPartofDirectory[0]+@"\Pictures\schoolPictures" ; //Needs to change for general release!
-            }
-            else
-            {
-                 newDirectory = cwd;
-            }
-            //if(Directory.Exists(newDirectory))
-            //{
-                Directory.SetCurrentDirectory(newDirectory);
-                var allFiles = Directory.GetFiles(newDirectory);
-                var imageName = "image " + allFiles.Length+".jpg";
+            
+            
+            string newDirectory = String.Empty;
+            
+             newDirectory = userSaveLocation+@"\yourPictures" ;
+             _url = newDirectory;
+            
+             Directory.CreateDirectory(newDirectory);
+             Directory.SetCurrentDirectory(newDirectory);
+             var allFiles = Directory.GetFiles(newDirectory);
+             var imageName = "image " + allFiles.Length+".jpg";
+
             try
             {
                 webClient.DownloadFile(url, imageName);
+                
             }
             catch (WebException e)
             {
+                ErrorLog(url);
                 Console.WriteLine("Hey heads up I couldn't download image at url: " + url+ " \n the browser threw the "+e.Message+" error!");
             }
                 
-            //}
-            //else
-            //{
-            //    Directory.CreateDirectory(newDirectory);
-            //    Directory.SetCurrentDirectory(newDirectory);
-            //    var allFiles = Directory.GetFiles(newDirectory);
-            //    var imageName = "image " + allFiles.Length;
-            //    webClient.DownloadFile(url, imageName + ".jpg");
-            //}
+           
+        }
+        public static void ErrorLog(string URL)
+        {
+            File.AppendText(_url + "\\ImageDownloaderErrorList.txt").WriteLine("The following URL did not work: "+URL);
         }
     }
 }
